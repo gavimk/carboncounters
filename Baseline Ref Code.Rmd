@@ -1,0 +1,127 @@
+---
+title: "Baseline Reference Scenario - SB County NWL GHG emissions and storage"
+author: "Carbon Counters"
+date: "7/28/2020"
+output: 
+  html_document: 
+    css: bootstrap.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE)
+```
+
+```{r}
+
+# In order to install extrafont, use following code in the console:
+## install.packages("extrafont")
+
+# In order to install NPS colors, use following code in the console:
+## install.packages("devtools")
+## devtools::install_github("katiejolly/nationalparkcolors")
+
+# You can skip both installations above if you do not plan to knit the .Rmd, just used to make things look pretty
+
+# Attach packages
+library(tidyverse)
+library(tidyr)
+library(here)
+library(janitor)
+library(plotly)
+library(extrafont)
+library(nationalparkcolors)
+library(kableExtra)
+library(effsize)
+library(stargazer)
+library(broom)
+
+# Load fonts
+loadfonts()
+
+```
+
+
+```{r}
+# First we will use this dummy data (created in excel) to test out the model
+# Read in data file: dummy_data.csv
+dummy_data <- read_csv("dummy_data.csv")
+
+# Next we will build models to fit a linear regression to each crop category along with total ag acreage
+
+# Total Acres
+
+lm_total_acre <- lm(total_acres ~ year, data = dummy_data)
+lm_total_acre_tidy <- broom::tidy(lm_total_acre)
+  
+# Annual Row Crops
+
+lm_annual_row <- lm(annual_row ~ year, data = dummy_data)
+lm_annual_row_tidy <- broom::tidy(lm_annual_row)
+
+# Orchard
+
+lm_orchard <- lm(orchard ~ year, data = dummy_data)
+lm_orchard_tidy <- broom::tidy(lm_orchard)
+
+# Vineyard
+
+lm_vineyard<- lm(vineyard ~ year, data = dummy_data)
+lm_vineyard_tidy <- broom::tidy(lm_vineyard)
+
+# Irrigated Pasture
+
+lm_pasture <- lm(pasture ~ year, data = dummy_data)
+lm_pasture_tidy <- broom::tidy(lm_pasture)
+```
+
+```{r}
+# Now we will use these models to predict acreage (total and per crop type) in 2030
+
+# First, we'll make a data frame of years out to 2030
+predict_df_2030 <- data.frame(year = c(2001, 2003, 2005, 2007, 2009, 2011, 2012, 2014, 2016, 2018, 2019, 2030))
+
+# Next, we'll predict values for these years using our model
+# Total acres
+predict_total_run <- predict(lm_total_acre, newdata = predict_df_2030)
+predict_total_df <- data.frame(predict_df_2030, predict_total_run)
+predict_total_df <- predict_total_df %>% 
+  rename("total_acres" = predict_total_run)
+
+# Annual row crops
+predict_annual_run <- predict(lm_annual_row, newdata = predict_df_2030)
+predict_annual_df <- data.frame(predict_df_2030, predict_annual_run)
+predict_annual_df
+predict_annual_df <- predict_annual_df %>% 
+  rename("annual_row" = predict_annual_run)
+
+# Orchard 
+predict_orchard_run <- predict(lm_orchard, newdata = predict_df_2030)
+predict_orchard_df <- data.frame(predict_df_2030, predict_orchard_run)
+predict_orchard_df
+predict_orchard_df <- predict_orchard_df %>% 
+  rename("orchard" = predict_orchard_run)
+
+# Vineyard 
+predict_vineyard_run <- predict(lm_vineyard, newdata = predict_df_2030)
+predict_vineyard_df <- data.frame(predict_df_2030, predict_vineyard_run)
+predict_vineyard_df
+predict_vineyard_df <- predict_vineyard_df %>% 
+  rename("vineyard" = predict_vineyard_run)
+
+# Pasture
+predict_pasture_run <- predict(lm_pasture, newdata = predict_df_2030)
+predict_pasture_df <- data.frame(predict_df_2030, predict_pasture_run)
+predict_pasture_df
+predict_pasture_df <- predict_pasture_df %>% 
+  rename("pasture" = predict_pasture_run)
+
+```
+
+```{r}
+# Let's make some plots
+
+ggplot() + 
+  geom_point(data = dummy_data, aes(x = year, y = total_acres)) +
+  geom_line(data = predict_total_df, aes(x = year, y = total_acres))
+```
+
