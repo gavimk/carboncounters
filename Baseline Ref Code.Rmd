@@ -85,43 +85,76 @@ predict_df_2030 <- data.frame(year = c(2001, 2003, 2005, 2007, 2009, 2011, 2012,
 predict_total_run <- predict(lm_total_acre, newdata = predict_df_2030)
 predict_total_df <- data.frame(predict_df_2030, predict_total_run)
 predict_total_df <- predict_total_df %>% 
-  rename("total_acres" = predict_total_run)
+  rename("total_acres_pred" = predict_total_run)
 
 # Annual row crops
 predict_annual_run <- predict(lm_annual_row, newdata = predict_df_2030)
 predict_annual_df <- data.frame(predict_df_2030, predict_annual_run)
 predict_annual_df
 predict_annual_df <- predict_annual_df %>% 
-  rename("annual_row" = predict_annual_run)
+  rename("annual_row_pred" = predict_annual_run)
 
 # Orchard 
 predict_orchard_run <- predict(lm_orchard, newdata = predict_df_2030)
 predict_orchard_df <- data.frame(predict_df_2030, predict_orchard_run)
 predict_orchard_df
 predict_orchard_df <- predict_orchard_df %>% 
-  rename("orchard" = predict_orchard_run)
+  rename("orchard_pred" = predict_orchard_run)
 
 # Vineyard 
 predict_vineyard_run <- predict(lm_vineyard, newdata = predict_df_2030)
 predict_vineyard_df <- data.frame(predict_df_2030, predict_vineyard_run)
 predict_vineyard_df
 predict_vineyard_df <- predict_vineyard_df %>% 
-  rename("vineyard" = predict_vineyard_run)
+  rename("vineyard_pred" = predict_vineyard_run)
 
 # Pasture
 predict_pasture_run <- predict(lm_pasture, newdata = predict_df_2030)
 predict_pasture_df <- data.frame(predict_df_2030, predict_pasture_run)
 predict_pasture_df
 predict_pasture_df <- predict_pasture_df %>% 
-  rename("pasture" = predict_pasture_run)
+  rename("pasture_pred" = predict_pasture_run)
 
 ```
 
 ```{r}
 # Let's make some plots
 
+# These plots compare real data to the regression
 ggplot() + 
   geom_point(data = dummy_data, aes(x = year, y = total_acres)) +
-  geom_line(data = predict_total_df, aes(x = year, y = total_acres))
+  geom_line(data = predict_total_df, aes(x = year, y = total_acres_pred)) +
+  theme_minimal() + 
+  labs(x = "year",
+       y = "total ag acres")
+
+ggplot() + 
+  geom_point(data = dummy_data, aes(x = year, y = annual_row)) +
+  geom_line(data = predict_annual_df, aes(x = year, y = annual_row_pred)) +
+  theme_minimal() + 
+  labs(x = "year",
+       y = "annual row crop acres")
+
+ggplot() + 
+  geom_point(data = dummy_data, aes(x = year, y = orchard)) +
+  geom_line(data = predict_orchard_df, aes(x = year, y = orchard_pred)) +
+  theme_minimal() + 
+  labs(x = "year",
+       y = "orchard acres")
+
+ggplot() + 
+  geom_point(data = dummy_data, aes(x = year, y = vineyard)) +
+  geom_line(data = predict_vineyard_df, aes(x = year, y = vineyard_pred)) +
+  theme_minimal() + 
+  labs(x = "year",
+       y = "vineyard acres")
+
+ggplot() + 
+  geom_point(data = dummy_data, aes(x = year, y = pasture)) +
+  geom_line(data = predict_pasture_df, aes(x = year, y = pasture_pred)) +
+    theme_minimal() + 
+    labs(x = "year",
+       y = "pasture acres")
+
 ```
 
