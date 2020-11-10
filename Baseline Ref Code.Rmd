@@ -78,7 +78,7 @@ lm_pasture_tidy <- broom::tidy(lm_pasture)
 # Now we will use these models to predict acreage (total and per crop type) in 2030
 
 # First, we'll make a data frame of years out to 2030
-predict_df_2030 <- data.frame(year = c(2001, 2003, 2005, 2007, 2009, 2011, 2012, 2014, 2016, 2018, 2019, 2030))
+predict_df_2030 <- data.frame(year = c(2001, 2003, 2005, 2007, 2009, 2011, 2014, 2018, 2020, 2022, 2024, 2026, 2028, 2030))
 
 # Next, we'll predict values for these years using our model
 # Total acres
